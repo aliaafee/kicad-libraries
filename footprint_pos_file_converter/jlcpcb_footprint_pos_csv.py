@@ -1,0 +1,85 @@
+import getopt
+import sys
+import csv
+import pprint
+
+def to_dict(lst):
+    headers = lst[0]
+    data = lst[1:]
+
+    res = [
+        {k:v for k,v in zip(headers, row)}
+        for row in data
+    ]
+
+    return res
+
+
+def load_csv(filename):
+    with open(filename) as csvfile:
+        reader = csv.reader(csvfile, delimiter=",", quotechar="\"")
+        lst = list(reader)
+    return to_dict(lst)
+
+def get_row(data, key, value):
+    for row in data:
+        if row[key] == value:
+            return row
+
+def convert(src__pos, src_bom, out_pos):
+    pos_data = load_csv(src__pos)
+    bom_data = load_csv(src_bom)
+
+    result = [
+        [
+            'Designator',
+            'Mid X',
+            'Mid Y',
+            'Layer',
+            'Rotation'
+        ]
+    ]
+    for component in bom_data:
+        pos = get_row(pos_data, 'Ref', component['Designator'])
+        row = [
+            component['Designator'],
+            pos['PosX']+'mm',
+            pos['PosY']+'mm',
+            pos['Side'],
+            pos['Rot']
+        ]
+        result.append(row)
+
+    with open(out_pos, 'w') as outcsv:
+        writer = csv.writer(outcsv)
+        writer.writerows(result)
+
+
+def usage():
+    print("convert.py <src_pos> <src_bom> <out_pos>")
+
+def main(argv):
+    src__pos = ""
+    src_bom = ""
+    out_pos = ""
+
+    try:
+        opts, args = getopt.getopt(argv, "h", ["help"])
+    except getopt.GetoptError:
+        usage()
+        sys.exit(2)
+
+    if len(args) == 3:
+        src__pos = args[0]
+        src_bom = args[1]
+        out_pos = args[2]
+    else:
+        usage()
+        sys.exit()
+
+    convert(src__pos, src_bom, out_pos)
+
+
+    
+if __name__ == '__main__':
+    main(sys.argv[1:])
