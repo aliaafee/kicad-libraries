@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import getopt
 import sys
 import csv
@@ -55,8 +57,8 @@ def convert(src__pos, src_bom, out_pos):
         writer.writerows(result)
 
 
-def usage():
-    print("convert.py <src_pos> <src_bom> <out_pos>")
+def usage(argv):
+    print("Usage: {} <src_pos> <src_bom> <out_pos>".format(argv[0]))
 
 def main(argv):
     src__pos = ""
@@ -64,9 +66,9 @@ def main(argv):
     out_pos = ""
 
     try:
-        opts, args = getopt.getopt(argv, "h", ["help"])
+        opts, args = getopt.getopt(argv[1:], "h", ["help"])
     except getopt.GetoptError:
-        usage()
+        usage(argv)
         sys.exit(2)
 
     if len(args) == 3:
@@ -74,7 +76,7 @@ def main(argv):
         src_bom = args[1]
         out_pos = args[2]
     else:
-        usage()
+        usage(argv)
         sys.exit()
 
     convert(src__pos, src_bom, out_pos)
@@ -82,4 +84,4 @@ def main(argv):
 
     
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    main(sys.argv)
