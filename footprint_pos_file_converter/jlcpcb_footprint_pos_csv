@@ -4,6 +4,8 @@ import getopt
 import sys
 import csv
 import pprint
+import os
+
 
 def to_dict(lst):
     headers = lst[0]
@@ -58,7 +60,7 @@ def convert(src__pos, src_bom, out_pos):
 
 
 def usage(argv):
-    print("Usage: {} <src_pos> <src_bom> <out_pos>".format(argv[0]))
+    print("Usage: {} <src_pos> <src_bom> <out_pos>".format(os.path.basename(argv[0])))
 
 def main(argv):
     src__pos = ""
